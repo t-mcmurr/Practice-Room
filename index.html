@@ -1,0 +1,850 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Practice Room</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Alegreya+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ebony:#17130F;
+  --surface:#211C15;
+  --surface-2:#2A241B;
+  --line:#3A3226;
+  --ivory:#F0E8D8;
+  --muted:#A2957F;
+  --brass:#C7A45A;
+  --brass-dim:#8A7340;
+  --felt:#B05C48;
+  --display:"Cormorant Garamond", Georgia, serif;
+  --body:"Alegreya Sans", "Segoe UI", sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion: reduce){
+  html{scroll-behavior:auto}
+  *,*::before,*::after{animation:none!important;transition:none!important}
+}
+body{
+  background:var(--ebony);
+  color:var(--ivory);
+  font-family:var(--body);
+  font-size:16px;
+  line-height:1.55;
+  -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:760px;margin:0 auto;padding:0 20px 80px}
+
+/* ---------- header ---------- */
+header{padding:34px 0 18px;border-bottom:1px solid var(--line)}
+.eyebrow{
+  font-size:11px;letter-spacing:.22em;text-transform:uppercase;
+  color:var(--brass);font-weight:700;
+}
+h1{
+  font-family:var(--display);font-weight:600;font-size:44px;
+  line-height:1.05;letter-spacing:.01em;margin-top:6px;
+}
+.subtitle{color:var(--muted);margin-top:8px;max-width:52ch}
+.header-stats{display:flex;gap:28px;margin-top:18px}
+.hstat .num{font-family:var(--display);font-size:26px;font-weight:600;color:var(--brass)}
+.hstat .lbl{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+
+/* ---------- tabs ---------- */
+nav{
+  display:flex;gap:2px;margin:22px 0 26px;
+  border:1px solid var(--line);border-radius:10px;overflow:hidden;
+  position:sticky;top:0;background:var(--ebony);z-index:5;
+}
+nav button{
+  flex:1;padding:12px 4px;background:transparent;border:none;cursor:pointer;
+  color:var(--muted);font-family:var(--body);font-size:13px;font-weight:700;
+  letter-spacing:.06em;text-transform:uppercase;
+  transition:color .15s,background .15s;
+}
+nav button:hover{color:var(--ivory)}
+nav button:focus-visible{outline:2px solid var(--brass);outline-offset:-2px}
+nav button.active{background:var(--surface-2);color:var(--brass)}
+.panel{display:none}
+.panel.active{display:block;animation:fade .25s ease}
+@keyframes fade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+
+/* ---------- shared ---------- */
+.card{
+  background:var(--surface);border:1px solid var(--line);
+  border-radius:12px;padding:20px;margin-bottom:14px;
+}
+h2{font-family:var(--display);font-weight:600;font-size:26px;margin-bottom:4px}
+h3{font-family:var(--display);font-weight:600;font-size:20px}
+.small{font-size:13px;color:var(--muted)}
+.btn{
+  display:inline-block;background:var(--brass);color:#1B160E;border:none;
+  font-family:var(--body);font-weight:700;font-size:14px;letter-spacing:.04em;
+  padding:10px 22px;border-radius:8px;cursor:pointer;transition:filter .15s;
+}
+.btn:hover{filter:brightness(1.1)}
+.btn:focus-visible{outline:2px solid var(--ivory);outline-offset:2px}
+.btn.ghost{background:transparent;color:var(--brass);border:1px solid var(--brass-dim)}
+.btn.ghost:hover{border-color:var(--brass)}
+.pill{
+  display:inline-block;font-size:11px;font-weight:700;letter-spacing:.1em;
+  text-transform:uppercase;padding:2px 9px;border-radius:20px;
+  border:1px solid var(--line);color:var(--muted);
+}
+.pill.game{color:#9DBB8F;border-color:#4A5540}
+.pill.film{color:#C5928A;border-color:#5A423C}
+.pill.classical{color:var(--brass);border-color:var(--brass-dim)}
+
+/* ---------- today ---------- */
+.day-chips{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0 20px}
+.day-chips button{
+  background:var(--surface);border:1px solid var(--line);color:var(--muted);
+  font-family:var(--body);font-size:13px;font-weight:700;padding:7px 14px;
+  border-radius:20px;cursor:pointer;transition:all .15s;
+}
+.day-chips button:hover{color:var(--ivory)}
+.day-chips button:focus-visible{outline:2px solid var(--brass);outline-offset:2px}
+.day-chips button.active{background:var(--brass);border-color:var(--brass);color:#1B160E}
+.session-head{display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:6px}
+.seg{
+  display:flex;gap:14px;padding:14px 0;border-top:1px solid var(--line);
+  align-items:flex-start;
+}
+.seg:first-of-type{border-top:none}
+.seg .min{
+  font-family:var(--display);font-size:22px;font-weight:600;color:var(--brass);
+  min-width:52px;text-align:right;line-height:1.2;
+}
+.seg .min span{font-size:11px;font-family:var(--body);color:var(--muted);display:block;letter-spacing:.1em;text-transform:uppercase}
+.seg.done{opacity:.45}
+.seg.current .name{color:var(--brass)}
+.seg .name{font-weight:700}
+.seg .detail{color:var(--muted);font-size:14px;margin-top:2px}
+
+/* timer */
+.timer-card{text-align:center;padding:28px 20px}
+.ring-wrap{position:relative;width:210px;height:210px;margin:0 auto}
+.ring-wrap svg{transform:rotate(-90deg)}
+.ring-bg{fill:none;stroke:var(--line);stroke-width:5}
+.ring-fg{fill:none;stroke:var(--brass);stroke-width:5;stroke-linecap:round;transition:stroke-dashoffset .5s linear}
+.ring-center{
+  position:absolute;inset:0;display:flex;flex-direction:column;
+  justify-content:center;align-items:center;gap:2px;
+}
+.t-digits{font-family:var(--display);font-size:52px;font-weight:600;line-height:1;font-variant-numeric:tabular-nums}
+.t-seg{font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--brass);font-weight:700}
+.t-next{font-size:12px;color:var(--muted)}
+.timer-btns{display:flex;gap:10px;justify-content:center;margin-top:20px;flex-wrap:wrap}
+
+/* ---------- week ---------- */
+.week-day{margin-bottom:14px}
+.week-day .dname{
+  font-family:var(--display);font-size:22px;font-weight:600;
+  display:flex;align-items:baseline;gap:10px;
+}
+.week-day .dname .focus{font-family:var(--body);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--brass);font-weight:700}
+
+/* ---------- repertoire path (signature: staff rail) ---------- */
+.path{position:relative;padding-left:34px}
+.path::before{
+  content:"";position:absolute;left:6px;top:0;bottom:0;width:13px;
+  background:repeating-linear-gradient(
+    to right, var(--line) 0, var(--line) 1px, transparent 1px, transparent 3.25px
+  );
+  opacity:.9;
+}
+.level{position:relative;margin-bottom:20px}
+.level::before{
+  content:"";position:absolute;left:-34px;top:26px;width:13px;height:13px;
+  background:var(--ebony);border:3px solid var(--brass-dim);border-radius:50%;
+}
+.level.current-level::before{background:var(--brass);border-color:var(--brass)}
+.level-head{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;flex-wrap:wrap}
+.level-head .months{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-weight:700;padding-top:6px}
+.level .focus-line{color:var(--muted);margin:6px 0 12px;font-size:14.5px;font-style:italic}
+.tech{margin:10px 0 4px}
+.tech li{
+  list-style:none;color:var(--muted);font-size:14px;padding:3px 0 3px 18px;position:relative;
+}
+.tech li::before{content:"♪";position:absolute;left:0;color:var(--brass-dim)}
+.milestone{
+  margin-top:12px;padding:10px 14px;background:var(--surface-2);
+  border-left:3px solid var(--brass);border-radius:0 8px 8px 0;font-size:14px;
+}
+.milestone strong{color:var(--brass);font-size:11px;letter-spacing:.14em;text-transform:uppercase;display:block;margin-bottom:2px}
+.pieces{margin-top:14px;border-top:1px solid var(--line)}
+.piece{
+  display:flex;align-items:center;gap:12px;padding:10px 0;
+  border-bottom:1px solid var(--line);cursor:pointer;
+}
+.piece:hover .pt{color:var(--brass)}
+.piece:focus-visible{outline:2px solid var(--brass);outline-offset:-2px;border-radius:6px}
+.notehead{
+  width:20px;height:20px;min-width:20px;border-radius:50% / 42%;
+  border:2px solid var(--muted);transform:rotate(-18deg);
+  transition:all .15s;position:relative;
+}
+.piece[data-status="1"] .notehead{
+  border-color:var(--brass);
+  background:linear-gradient(90deg, var(--brass) 50%, transparent 50%);
+}
+.piece[data-status="2"] .notehead{border-color:var(--brass);background:var(--brass)}
+.piece-info{flex:1}
+.pt{font-weight:700;transition:color .15s}
+.piece[data-status="2"] .pt{color:var(--brass)}
+.pc{font-size:13px;color:var(--muted)}
+.pn{font-size:13px;color:var(--muted);font-style:italic;margin-top:1px}
+.piece-right{display:flex;flex-direction:column;align-items:flex-end;gap:4px}
+.status-lbl{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:700}
+.piece[data-status="1"] .status-lbl{color:var(--ivory)}
+.piece[data-status="2"] .status-lbl{color:var(--brass)}
+.lvl-progress{height:4px;background:var(--line);border-radius:2px;margin-top:14px;overflow:hidden}
+.lvl-progress i{display:block;height:100%;background:var(--brass);border-radius:2px;transition:width .3s}
+.set-level{margin-top:12px}
+.legend{display:flex;gap:18px;flex-wrap:wrap;margin:4px 0 20px;color:var(--muted);font-size:13px;align-items:center}
+.legend .notehead{display:inline-block;vertical-align:middle;margin-right:6px}
+.legend span{display:flex;align-items:center}
+
+/* ---------- log ---------- */
+.log-form{display:flex;flex-direction:column;gap:12px}
+.log-form label{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-weight:700}
+.log-form input,.log-form select,.log-form textarea{
+  width:100%;background:var(--surface-2);border:1px solid var(--line);
+  border-radius:8px;color:var(--ivory);font-family:var(--body);font-size:15px;
+  padding:10px 12px;
+}
+.log-form textarea{resize:vertical;min-height:64px}
+.log-form input:focus,.log-form select:focus,.log-form textarea:focus{outline:2px solid var(--brass);outline-offset:-1px}
+.log-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.log-entry{
+  display:flex;gap:14px;padding:12px 0;border-bottom:1px solid var(--line);
+  align-items:baseline;
+}
+.log-entry .d{font-family:var(--display);font-size:17px;font-weight:600;color:var(--brass);min-width:86px}
+.log-entry .m{font-size:13px;color:var(--muted);min-width:56px}
+.log-entry .n{flex:1;font-size:14px}
+.log-entry .del{
+  background:none;border:none;color:var(--muted);cursor:pointer;font-size:16px;
+  font-family:var(--body);padding:0 4px;
+}
+.log-entry .del:hover{color:var(--felt)}
+.week-meter{display:flex;gap:6px;margin-top:10px}
+.week-meter i{
+  flex:1;height:8px;border-radius:4px;background:var(--line);
+}
+.week-meter i.hit{background:var(--brass)}
+.empty{color:var(--muted);font-style:italic;padding:14px 0}
+.storage-note{font-size:12px;color:var(--muted);margin-top:16px;font-style:italic}
+
+footer{margin-top:40px;padding-top:18px;border-top:1px solid var(--line);color:var(--muted);font-size:13px}
+footer em{color:var(--brass);font-style:normal;font-family:var(--display);font-size:15px}
+
+@media (max-width:520px){
+  h1{font-size:34px}
+  nav button{font-size:11px;padding:11px 2px}
+  .log-row{grid-template-columns:1fr}
+  .seg .min{min-width:44px;font-size:19px}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <div class="eyebrow">The Practice Room</div>
+  <h1>From intermediate to&nbsp;artistry.</h1>
+  <p class="subtitle">A five-day, 25-minute regimen — classical repertoire alongside the best of film and game scores. Consistency beats heroics.</p>
+  <div class="header-stats">
+    <div class="hstat"><div class="num" id="statWeek">0/5</div><div class="lbl">This week</div></div>
+    <div class="hstat"><div class="num" id="statTotal">0</div><div class="lbl">Sessions</div></div>
+    <div class="hstat"><div class="num" id="statHours">0h</div><div class="lbl">At the keys</div></div>
+    <div class="hstat"><div class="num" id="statLevel">1</div><div class="lbl">Level</div></div>
+  </div>
+</header>
+
+<nav id="tabs" role="tablist">
+  <button data-tab="today" class="active" role="tab">Today</button>
+  <button data-tab="week" role="tab">The Week</button>
+  <button data-tab="path" role="tab">Repertoire</button>
+  <button data-tab="log" role="tab">Log</button>
+</nav>
+
+<!-- ============ TODAY ============ -->
+<section class="panel active" id="panel-today">
+  <h2 id="todayTitle">Today's session</h2>
+  <p class="small" id="todayHint"></p>
+  <div class="day-chips" id="dayChips"></div>
+
+  <div class="card timer-card">
+    <div class="ring-wrap">
+      <svg width="210" height="210" viewBox="0 0 210 210" aria-hidden="true">
+        <circle class="ring-bg" cx="105" cy="105" r="98"></circle>
+        <circle class="ring-fg" id="ringFg" cx="105" cy="105" r="98"></circle>
+      </svg>
+      <div class="ring-center">
+        <div class="t-seg" id="tSeg">Warm-up</div>
+        <div class="t-digits" id="tDigits">5:00</div>
+        <div class="t-next" id="tNext"></div>
+      </div>
+    </div>
+    <div class="timer-btns">
+      <button class="btn" id="btnStart">Start session</button>
+      <button class="btn ghost" id="btnSkip">Next segment</button>
+      <button class="btn ghost" id="btnReset">Reset</button>
+    </div>
+  </div>
+
+  <div class="card" id="sessionPlan"></div>
+</section>
+
+<!-- ============ WEEK ============ -->
+<section class="panel" id="panel-week">
+  <h2>The weekly shape</h2>
+  <p class="small" style="margin-bottom:18px">Five sessions, five different jobs. Each one is 25 minutes — the structure is what makes short sessions add up. Weekends are for rest, or for playing purely for pleasure with no agenda.</p>
+  <div id="weekList"></div>
+  <div class="card">
+    <h3>House rules</h3>
+    <ul class="tech" style="margin-top:8px">
+      <li>Practice slowly enough to play correctly. Speed is a by-product of accuracy, never the other way around.</li>
+      <li>Loop small: two to four bars at a time. Playing a piece from the top every time only polishes the first page.</li>
+      <li>Metronome on for technique work, off for musical shaping. Both matter.</li>
+      <li>When sight-reading, never stop and never go back. Keeping the pulse is the whole exercise.</li>
+      <li>Record yourself every Friday. The phone microphone is an honest teacher.</li>
+      <li>Sheet music for nearly all the classical repertoire here is free on IMSLP; licensed arrangements of the film and game pieces are on Musicnotes or Sheet Music Plus.</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ============ REPERTOIRE PATH ============ -->
+<section class="panel" id="panel-path">
+  <h2>Repertoire path</h2>
+  <p class="small" style="margin:4px 0 12px">Tap a piece to cycle its status. Learn three to four pieces per level to a genuinely finished state — plus the milestone — before moving up. Timelines are honest estimates at five short sessions a week; moving slower than the label is normal, not failure.</p>
+  <div class="legend">
+    <span><i class="notehead" style="display:inline-block"></i>Not started</span>
+    <span><i class="notehead" style="display:inline-block;border-color:var(--brass);background:linear-gradient(90deg,var(--brass) 50%,transparent 50%)"></i>Learning</span>
+    <span><i class="notehead" style="display:inline-block;border-color:var(--brass);background:var(--brass)"></i>Polished</span>
+  </div>
+  <div class="path" id="pathList"></div>
+</section>
+
+<!-- ============ LOG ============ -->
+<section class="panel" id="panel-log">
+  <h2>Practice log</h2>
+  <p class="small">One line after each session. Friday's line should answer: what gets fixed on Monday?</p>
+  <div class="card" style="margin-top:14px">
+    <div class="log-form">
+      <div class="log-row">
+        <div>
+          <label for="logDate">Date</label>
+          <input type="date" id="logDate">
+        </div>
+        <div>
+          <label for="logMin">Minutes</label>
+          <input type="number" id="logMin" value="25" min="1" max="600">
+        </div>
+      </div>
+      <div>
+        <label for="logNote">Note</label>
+        <textarea id="logNote" placeholder="e.g. Bars 9–12 of the Invention still uneven — loop Monday."></textarea>
+      </div>
+      <div><button class="btn" id="btnLog">Log session</button></div>
+    </div>
+  </div>
+  <div class="card">
+    <h3>This week</h3>
+    <div class="week-meter" id="weekMeter"></div>
+    <div id="logList" style="margin-top:14px"></div>
+  </div>
+  <p class="storage-note">Progress is saved in this browser. Use the same device and browser to keep your history.</p>
+</section>
+
+<footer>
+  <em>“I can already play Bach's Prelude in C.”</em> — then Level 1 is consolidation, not review. Start there anyway; the fundamentals are what make Level 5 possible.
+</footer>
+</div>
+
+<script>
+/* ============================================================
+   DATA — the curriculum
+============================================================ */
+const LEVELS = [
+{
+  name:"Foundations", months:"Months 1–2",
+  focus:"Consolidate what you already have: even tone, steady pulse, and reading without panic.",
+  technique:[
+    "Major scales C, G, D, A, E — two octaves, hands together, with metronome",
+    "Broken triads and simple cadences (I–IV–V–I) in C, G, and F",
+    "Every repertoire session at half tempo first, no exceptions"
+  ],
+  milestone:"Gymnopédie No. 1 with a calm, even left hand — and one piece fully memorized.",
+  pieces:[
+    {t:"Minuet in G major, BWV Anh. 114", c:"Petzold (attr. Bach)", g:"Classical", n:"Clean articulation and phrase shaping in a two-voice texture."},
+    {t:"Gymnopédie No. 1", c:"Erik Satie", g:"Classical", n:"Left-hand leaps, quiet chord voicing, first serious pedal work."},
+    {t:"Of Foreign Lands and Peoples", c:"Robert Schumann", g:"Classical", n:"Kinderszenen No. 1 — melody floated over broken chords."},
+    {t:"Zelda's Lullaby (Ocarina of Time)", c:"Koji Kondo", g:"Game", n:"Lyric 3/4 playing; a gentle first piece to memorize."},
+    {t:"Hedwig's Theme (easy arr.)", c:"John Williams", g:"Film", n:"Minor-key color with a light, floating touch."}
+  ]
+},
+{
+  name:"Independence", months:"Months 3–5",
+  focus:"Two hands that think for themselves, and a reading habit that compounds weekly.",
+  technique:[
+    "Harmonic minor scales A, E, D, G — two octaves",
+    "C major in contrary motion",
+    "Wednesday sight-reading becomes non-negotiable: always material two levels below what you play"
+  ],
+  milestone:"Invention No. 1 at a steady tempo with the hands genuinely independent — no left hand tagging along.",
+  pieces:[
+    {t:"Invention No. 1 in C major, BWV 772", c:"J.S. Bach", g:"Classical", n:"The classic test of hand independence. Everything after this gets easier."},
+    {t:"Sonatina Op. 36 No. 1, 1st mvt", c:"Muzio Clementi", g:"Classical", n:"Classical clarity and scale runs at speed."},
+    {t:"Prelude in E minor, Op. 28 No. 4", c:"Frédéric Chopin", g:"Classical", n:"Slow-burn expression; control of soft repeated chords."},
+    {t:"Prelude in A major, Op. 28 No. 7", c:"Frédéric Chopin", g:"Classical", n:"Sixteen bars of pure phrasing practice."},
+    {t:"Comptine d'un autre été (Amélie)", c:"Yann Tiersen", g:"Film", n:"A fast broken-chord left hand played at a whisper."},
+    {t:"To Zanarkand (Final Fantasy X)", c:"Nobuo Uematsu", g:"Game", n:"Your first real rubato and singing tone."},
+    {t:"Song of Storms (Ocarina of Time)", c:"Koji Kondo", g:"Game", n:"Driving 3/4 rhythm and quick hand shifts."}
+  ]
+},
+{
+  name:"Expression", months:"Months 6–9",
+  focus:"Pedaling, rubato, and playing that sounds like music instead of notes.",
+  technique:[
+    "Legato (syncopated) pedaling drills — pedal changes just after the beat",
+    "Four-octave arpeggios in C, G, F with inversions",
+    "Ornaments: mordents and turns, slow and even before fast"
+  ],
+  milestone:"Für Elise complete — both middle episodes, not just the famous page — and your first recorded two-piece recital.",
+  pieces:[
+    {t:"Für Elise (complete)", c:"Ludwig van Beethoven", g:"Classical", n:"Everyone plays page one. The middle episodes are the actual lesson."},
+    {t:"Invention No. 8 in F major", c:"J.S. Bach", g:"Classical", n:"Lightness and velocity in counterpoint."},
+    {t:"Waltz in A minor, B. 150", c:"Frédéric Chopin", g:"Classical", n:"Your first genuine rubato in a full piece."},
+    {t:"Rêverie", c:"Claude Debussy", g:"Classical", n:"Color, pedal blur, and very long lines."},
+    {t:"Merry Christmas, Mr. Lawrence", c:"Ryuichi Sakamoto", g:"Film", n:"Ostinato control under a fragile melody."},
+    {t:"Aerith's Theme (Final Fantasy VII)", c:"Nobuo Uematsu", g:"Game", n:"Wide left-hand reaches and a truly singing right hand."},
+    {t:"Dearly Beloved (Kingdom Hearts)", c:"Yoko Shimomura", g:"Game", n:"Flowing, watery cross-rhythm feel."}
+  ]
+},
+{
+  name:"Command", months:"Months 10–15",
+  focus:"Voicing, speed, and control of every layer in the texture at once.",
+  technique:[
+    "Scales in sixteenths at ♩ = 100 and climbing",
+    "Voicing drills: melody forte and accompaniment piano inside the same hand",
+    "Trills and grace notes with a relaxed wrist — tension is the enemy of speed"
+  ],
+  milestone:"Nocturne Op. 9 No. 2 with shaped rubato and a voiced right hand — plus sight-reading early-intermediate pieces cleanly on the first pass.",
+  pieces:[
+    {t:"Nocturne in E-flat major, Op. 9 No. 2", c:"Frédéric Chopin", g:"Classical", n:"The centerpiece of this level. Ornaments, rubato, bel canto tone."},
+    {t:"“Moonlight” Sonata, 1st mvt", c:"Ludwig van Beethoven", g:"Classical", n:"Six minutes of restraint: triplet control and voicing."},
+    {t:"Arabesque No. 1", c:"Claude Debussy", g:"Classical", n:"Two-against-three polyrhythm made beautiful."},
+    {t:"Sonata Op. 49 No. 2, 1st mvt", c:"Ludwig van Beethoven", g:"Classical", n:"Classical style at real tempo."},
+    {t:"One Summer's Day (Spirited Away)", c:"Joe Hisaishi", g:"Film", n:"Delicacy, then sweep. A crowd favorite for good reason."},
+    {t:"Corridors of Time (Chrono Trigger)", c:"Yasunori Mitsuda", g:"Game", n:"Layered ostinato textures that test your voicing work."},
+    {t:"Interstellar — Main Theme (arr.)", c:"Hans Zimmer", g:"Film", n:"Building enormous dynamics over a repeating figure."}
+  ]
+},
+{
+  name:"Artistry", months:"Months 16–24",
+  focus:"Advanced repertoire — the level where 'super proficient' stops being a goal and starts being a description.",
+  technique:[
+    "Three-against-four polyrhythm mastery",
+    "Octave passages with a loose, dropping wrist",
+    "Fast pianissimo passagework — quiet speed is the rarest skill"
+  ],
+  milestone:"Clair de Lune performance-ready, played for an actual human audience.",
+  pieces:[
+    {t:"Clair de Lune", c:"Claude Debussy", g:"Classical", n:"The summit of this path. Every skill from Levels 1–4 appears somewhere in it."},
+    {t:"Nocturne in C-sharp minor (posth.)", c:"Frédéric Chopin", g:"Classical", n:"Haunting, exposed, and unforgiving of uneven runs."},
+    {t:"Waltz in C-sharp minor, Op. 64 No. 2", c:"Frédéric Chopin", g:"Classical", n:"Elegance at speed; the più mosso sections earn their keep."},
+    {t:"Pathétique Sonata, 2nd mvt", c:"Ludwig van Beethoven", g:"Classical", n:"Voicing a chorale melody over moving inner parts."},
+    {t:"Consolation No. 3", c:"Franz Liszt", g:"Classical", n:"Liszt at his gentlest — left hand as a harp."},
+    {t:"Merry-Go-Round of Life (Howl's Moving Castle)", c:"Joe Hisaishi", g:"Film", n:"Waltz virtuosity — the crown jewel of the film/game list."},
+    {t:"Final Fantasy VII Main Theme (adv. arr.)", c:"Nobuo Uematsu", g:"Game", n:"An orchestral score under ten fingers."}
+  ]
+}
+];
+
+const WEEK = [
+{ day:"Monday", focus:"Technique", segs:[
+  ["Warm-up", 5, "Scales and arpeggios from your current level's technique list — slow, with metronome."],
+  ["Technique drill", 8, "This level's focus (see Repertoire tab). Small repeatable patterns, not marathons."],
+  ["Repertoire — slow work", 12, "Current piece, hands separate, half tempo. Accuracy over speed, always."]
+]},
+{ day:"Tuesday", focus:"Deep work", segs:[
+  ["Warm-up", 4, "One scale set, then straight to the bench work."],
+  ["Trouble spots", 13, "Pick the 2–4 hardest bars in your piece. Loop each until you get three clean repetitions in a row."],
+  ["Zoom out", 8, "Play the full section around each fixed spot at tempo minus 20%. Stitch the repair into the fabric."]
+]},
+{ day:"Wednesday", focus:"Reading", segs:[
+  ["Warm-up", 4, "One scale set, light and even."],
+  ["Sight-reading", 8, "Brand-new material, two levels below what you play. Eyes ahead, never stop, never fix — the pulse is the exercise."],
+  ["Repertoire", 13, "Current piece hands together, working section by section."]
+]},
+{ day:"Thursday", focus:"Memory & shape", segs:[
+  ["Warm-up", 4, "Scales from memory — no looking at your hands."],
+  ["Memory work", 8, "Memorize 4–8 bars: play them, look away, rebuild them from the harmony, not the finger pattern."],
+  ["Phrasing", 13, "Current piece with exaggerated dynamics — twice as loud, twice as soft as marked. Then dial it back to taste."]
+]},
+{ day:"Friday", focus:"Performance", segs:[
+  ["Warm-up", 4, "Something easy and pleasant. Get the hands moving."],
+  ["Run-throughs", 13, "Play your working pieces start to finish with no stopping, like it's a recital. Record at least one on your phone."],
+  ["Review", 8, "Listen back honestly. Then write one line in the Log: what gets fixed on Monday?"]
+]}
+];
+
+/* ============================================================
+   STORAGE — localStorage with in-memory fallback
+============================================================ */
+const mem = {};
+const store = {
+  get(k, fallback){
+    try{
+      const v = localStorage.getItem(k);
+      return v === null ? fallback : JSON.parse(v);
+    }catch(e){ return (k in mem) ? mem[k] : fallback; }
+  },
+  set(k, v){
+    try{ localStorage.setItem(k, JSON.stringify(v)); }
+    catch(e){ mem[k] = v; }
+  }
+};
+
+let state = {
+  level: store.get("pr_level", 0),
+  pieces: store.get("pr_pieces", {}),   // "levelIdx-pieceIdx" -> 0|1|2
+  log: store.get("pr_log", [])          // [{date:"YYYY-MM-DD", min, note}]
+};
+function save(){
+  store.set("pr_level", state.level);
+  store.set("pr_pieces", state.pieces);
+  store.set("pr_log", state.log);
+}
+
+/* ============================================================
+   TABS
+============================================================ */
+const tabs = document.querySelectorAll("#tabs button");
+tabs.forEach(b => b.addEventListener("click", () => {
+  tabs.forEach(x => x.classList.remove("active"));
+  b.classList.add("active");
+  document.querySelectorAll(".panel").forEach(p => p.classList.remove("active"));
+  document.getElementById("panel-" + b.dataset.tab).classList.add("active");
+}));
+
+/* ============================================================
+   TODAY — day selection + session plan
+============================================================ */
+const DAYNAMES = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+let selectedDay; // 0..4 index into WEEK
+
+function defaultDay(){
+  const jsDay = new Date().getDay(); // 0 Sun .. 6 Sat
+  if(jsDay >= 1 && jsDay <= 5) return jsDay - 1;
+  return null; // weekend
+}
+
+function renderDayChips(){
+  const wrap = document.getElementById("dayChips");
+  wrap.innerHTML = "";
+  WEEK.forEach((d, i) => {
+    const b = document.createElement("button");
+    b.textContent = d.day.slice(0,3) + " · " + d.focus;
+    if(i === selectedDay) b.classList.add("active");
+    b.addEventListener("click", () => { selectedDay = i; timerReset(true); renderToday(); });
+    wrap.appendChild(b);
+  });
+}
+
+function renderSessionPlan(){
+  const d = WEEK[selectedDay];
+  const lvl = LEVELS[state.level];
+  const el = document.getElementById("sessionPlan");
+  let html = `<div class="session-head"><h3>${d.day} — ${d.focus}</h3>
+    <span class="pill classical">Level ${state.level+1} · ${lvl.name}</span></div>`;
+  d.segs.forEach((s, i) => {
+    html += `<div class="seg" data-seg="${i}">
+      <div class="min">${s[1]}<span>min</span></div>
+      <div><div class="name">${s[0]}</div><div class="detail">${s[2]}</div></div>
+    </div>`;
+  });
+  el.innerHTML = html;
+  markSegments();
+}
+
+function renderToday(){
+  const jsDay = new Date().getDay();
+  const isWeekend = (jsDay === 0 || jsDay === 6);
+  document.getElementById("todayTitle").textContent =
+    isWeekend ? "Rest day" : "Today — " + DAYNAMES[jsDay];
+  document.getElementById("todayHint").textContent = isWeekend
+    ? "Weekends are off. Play for pleasure with no agenda, or pull up any day's plan below if you're feeling keen."
+    : "Your 25 minutes, already decided. Sit down and press start.";
+  renderDayChips();
+  renderSessionPlan();
+  updateRing();
+}
+
+/* ============================================================
+   TIMER
+============================================================ */
+const RADIUS = 98, CIRC = 2 * Math.PI * RADIUS;
+const ringFg = document.getElementById("ringFg");
+ringFg.style.strokeDasharray = CIRC;
+
+let segIdx = 0, remaining = 0, running = false, tick = null;
+
+function segList(){ return WEEK[selectedDay].segs; }
+
+function timerReset(silent){
+  clearInterval(tick); running = false; segIdx = 0;
+  remaining = segList()[0][1] * 60;
+  document.getElementById("btnStart").textContent = "Start session";
+  updateRing(); markSegments();
+  if(!silent) chime(1);
+}
+
+function updateRing(){
+  const segs = segList();
+  const total = segs[segIdx][1] * 60;
+  const frac = total ? remaining / total : 0;
+  ringFg.style.strokeDashoffset = CIRC * (1 - frac);
+  const m = Math.floor(remaining / 60), s = remaining % 60;
+  document.getElementById("tDigits").textContent = m + ":" + String(s).padStart(2,"0");
+  document.getElementById("tSeg").textContent = segs[segIdx][0];
+  document.getElementById("tNext").textContent =
+    segIdx < segs.length - 1 ? "Next: " + segs[segIdx+1][0] : "Last segment";
+}
+
+function markSegments(){
+  document.querySelectorAll("#sessionPlan .seg").forEach((el, i) => {
+    el.classList.toggle("done", i < segIdx);
+    el.classList.toggle("current", i === segIdx);
+  });
+}
+
+function advanceSeg(){
+  const segs = segList();
+  if(segIdx < segs.length - 1){
+    segIdx++;
+    remaining = segs[segIdx][1] * 60;
+    chime(2);
+    markSegments(); updateRing();
+  }else{
+    clearInterval(tick); running = false;
+    chime(3);
+    document.getElementById("tSeg").textContent = "Session done";
+    document.getElementById("tDigits").textContent = "0:00";
+    document.getElementById("tNext").textContent = "Log it before you stand up.";
+    document.getElementById("btnStart").textContent = "Start session";
+    segIdx = segs.length; markSegments(); segIdx = segs.length - 1;
+  }
+}
+
+document.getElementById("btnStart").addEventListener("click", () => {
+  if(running){
+    clearInterval(tick); running = false;
+    document.getElementById("btnStart").textContent = "Resume";
+  }else{
+    running = true;
+    document.getElementById("btnStart").textContent = "Pause";
+    tick = setInterval(() => {
+      remaining--;
+      if(remaining <= 0){ advanceSeg(); if(!running) return; }
+      updateRing();
+    }, 1000);
+  }
+});
+document.getElementById("btnSkip").addEventListener("click", () => { advanceSeg(); });
+document.getElementById("btnReset").addEventListener("click", () => timerReset(true));
+
+/* soft chime via Web Audio */
+let audioCtx = null;
+function chime(n){
+  try{
+    audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
+    const notes = n === 3 ? [523.25, 659.25, 783.99] : n === 2 ? [659.25] : [523.25];
+    notes.forEach((f, i) => {
+      const o = audioCtx.createOscillator(), g = audioCtx.createGain();
+      o.type = "sine"; o.frequency.value = f;
+      g.gain.setValueAtTime(0.0001, audioCtx.currentTime + i*0.18);
+      g.gain.exponentialRampToValueAtTime(0.18, audioCtx.currentTime + i*0.18 + 0.02);
+      g.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + i*0.18 + 0.9);
+      o.connect(g); g.connect(audioCtx.destination);
+      o.start(audioCtx.currentTime + i*0.18);
+      o.stop(audioCtx.currentTime + i*0.18 + 1);
+    });
+  }catch(e){}
+}
+
+/* ============================================================
+   WEEK TAB
+============================================================ */
+function renderWeek(){
+  const el = document.getElementById("weekList");
+  el.innerHTML = WEEK.map(d => `
+    <div class="card week-day">
+      <div class="dname">${d.day} <span class="focus">${d.focus}</span></div>
+      ${d.segs.map(s => `
+        <div class="seg">
+          <div class="min">${s[1]}<span>min</span></div>
+          <div><div class="name">${s[0]}</div><div class="detail">${s[2]}</div></div>
+        </div>`).join("")}
+    </div>`).join("");
+}
+
+/* ============================================================
+   REPERTOIRE PATH
+============================================================ */
+const STATUS_LBL = ["Not started","Learning","Polished"];
+
+function renderPath(){
+  const el = document.getElementById("pathList");
+  el.innerHTML = LEVELS.map((lvl, li) => {
+    const polished = lvl.pieces.filter((_, pi) => (state.pieces[li+"-"+pi] || 0) === 2).length;
+    const pct = Math.round(100 * polished / lvl.pieces.length);
+    const isCurrent = li === state.level;
+    return `
+    <div class="card level ${isCurrent ? "current-level" : ""}">
+      <div class="level-head">
+        <div>
+          <h3>Level ${li+1} · ${lvl.name}</h3>
+        </div>
+        <div class="months">${lvl.months}</div>
+      </div>
+      <div class="focus-line">${lvl.focus}</div>
+      <div class="small" style="font-weight:700;letter-spacing:.1em;text-transform:uppercase;font-size:11px">Technique goals</div>
+      <ul class="tech">${lvl.technique.map(t => `<li>${t}</li>`).join("")}</ul>
+      <div class="milestone"><strong>Milestone to level up</strong>${lvl.milestone}</div>
+      <div class="pieces">
+        ${lvl.pieces.map((p, pi) => {
+          const st = state.pieces[li+"-"+pi] || 0;
+          return `<div class="piece" data-status="${st}" data-key="${li}-${pi}" tabindex="0" role="button"
+            aria-label="${p.t}, status ${STATUS_LBL[st]}. Activate to change.">
+            <div class="notehead"></div>
+            <div class="piece-info">
+              <div class="pt">${p.t}</div>
+              <div class="pc">${p.c}</div>
+              <div class="pn">${p.n}</div>
+            </div>
+            <div class="piece-right">
+              <span class="pill ${p.g.toLowerCase()}">${p.g}</span>
+              <span class="status-lbl">${STATUS_LBL[st]}</span>
+            </div>
+          </div>`;
+        }).join("")}
+      </div>
+      <div class="lvl-progress"><i style="width:${pct}%"></i></div>
+      <div class="small" style="margin-top:6px">${polished} of ${lvl.pieces.length} polished</div>
+      ${isCurrent
+        ? `<div class="set-level"><span class="pill classical">Current level</span></div>`
+        : `<div class="set-level"><button class="btn ghost" data-setlevel="${li}">Make this my level</button></div>`}
+    </div>`;
+  }).join("");
+
+  el.querySelectorAll(".piece").forEach(p => {
+    const activate = () => {
+      const key = p.dataset.key;
+      state.pieces[key] = ((state.pieces[key] || 0) + 1) % 3;
+      save(); renderPath(); renderStats();
+    };
+    p.addEventListener("click", activate);
+    p.addEventListener("keydown", e => { if(e.key === "Enter" || e.key === " "){ e.preventDefault(); activate(); } });
+  });
+  el.querySelectorAll("[data-setlevel]").forEach(b => {
+    b.addEventListener("click", e => {
+      e.stopPropagation();
+      state.level = parseInt(b.dataset.setlevel, 10);
+      save(); renderPath(); renderStats(); renderSessionPlan();
+    });
+  });
+}
+
+/* ============================================================
+   LOG
+============================================================ */
+function isoToday(){
+  const d = new Date();
+  return d.getFullYear() + "-" + String(d.getMonth()+1).padStart(2,"0") + "-" + String(d.getDate()).padStart(2,"0");
+}
+function startOfWeek(){ // Monday
+  const d = new Date(); const day = d.getDay();
+  const diff = (day === 0 ? 6 : day - 1);
+  d.setDate(d.getDate() - diff); d.setHours(0,0,0,0);
+  return d;
+}
+function fmtDate(iso){
+  const [y,m,dd] = iso.split("-").map(Number);
+  const d = new Date(y, m-1, dd);
+  return d.toLocaleDateString(undefined, {month:"short", day:"numeric"});
+}
+
+function renderLog(){
+  const list = document.getElementById("logList");
+  if(state.log.length === 0){
+    list.innerHTML = `<div class="empty">No sessions yet. The first entry is the hardest one.</div>`;
+  }else{
+    list.innerHTML = state.log.slice().reverse().map((e, ri) => {
+      const idx = state.log.length - 1 - ri;
+      return `<div class="log-entry">
+        <span class="d">${fmtDate(e.date)}</span>
+        <span class="m">${e.min} min</span>
+        <span class="n">${e.note ? escapeHtml(e.note) : "<span class='small'>—</span>"}</span>
+        <button class="del" data-del="${idx}" aria-label="Delete entry">×</button>
+      </div>`;
+    }).join("");
+    list.querySelectorAll("[data-del]").forEach(b => b.addEventListener("click", () => {
+      state.log.splice(parseInt(b.dataset.del,10), 1);
+      save(); renderLog(); renderStats();
+    }));
+  }
+  // week meter
+  const sow = startOfWeek();
+  const days = new Set(state.log.filter(e => new Date(e.date + "T12:00:00") >= sow).map(e => e.date));
+  const meter = document.getElementById("weekMeter");
+  meter.innerHTML = Array.from({length:5}, (_, i) => `<i class="${i < days.size ? "hit" : ""}"></i>`).join("");
+}
+
+function escapeHtml(s){
+  return s.replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+}
+
+document.getElementById("btnLog").addEventListener("click", () => {
+  const date = document.getElementById("logDate").value || isoToday();
+  const min = Math.max(1, parseInt(document.getElementById("logMin").value, 10) || 25);
+  const note = document.getElementById("logNote").value.trim();
+  state.log.push({date, min, note});
+  state.log.sort((a,b) => a.date < b.date ? -1 : 1);
+  save();
+  document.getElementById("logNote").value = "";
+  renderLog(); renderStats();
+});
+
+/* ============================================================
+   STATS
+============================================================ */
+function renderStats(){
+  const sow = startOfWeek();
+  const daysThisWeek = new Set(state.log.filter(e => new Date(e.date + "T12:00:00") >= sow).map(e => e.date)).size;
+  document.getElementById("statWeek").textContent = Math.min(daysThisWeek,5) + "/5";
+  document.getElementById("statTotal").textContent = state.log.length;
+  const mins = state.log.reduce((a,e) => a + e.min, 0);
+  document.getElementById("statHours").textContent = (mins/60).toFixed(mins >= 600 ? 0 : 1) + "h";
+  document.getElementById("statLevel").textContent = state.level + 1;
+}
+
+/* ============================================================
+   INIT
+============================================================ */
+selectedDay = defaultDay();
+if(selectedDay === null) selectedDay = 0;
+document.getElementById("logDate").value = isoToday();
+renderToday();
+renderWeek();
+renderPath();
+renderLog();
+renderStats();
+timerReset(true);
+</script>
+</body>
+</html>
